@@ -10,11 +10,14 @@
     "default_height": 500
   },
   "permissions": ["storage", "activeTab", "scripting"],
-
+  "host_permissions": ["https://cathedralplumbingtx.bamboohr.com/*"],
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "matches": [
+        "https://cathedralplumbingtx.bamboohr.com/app/time_off/requests/create"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [

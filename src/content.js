@@ -55,10 +55,29 @@ if (toInput) {
   });
 }
 
-const submitButton = document.querySelector("#submit");
+const observer = new MutationObserver(() => {
+  const foundButton = document.querySelector('button[type="submit"]');
 
-if (submitButton) {
-  submitButton.addEventListener("click", () => {
+  if (foundButton && !foundButton._listenerAttached) {
+    console.log("🎯 Submit button found and attaching listener");
+
+    foundButton.addEventListener("click", () => {
+      console.log("✅ Click submit button");
+      createPDF();
+    });
+
+    foundButton._listenerAttached = true;
+    submitButton = foundButton;
+  }
+});
+
+observer.observe(document.body, {
+  childList: true,
+  subtree: true,
+});
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "triggerSubmit") {
     updatePdf(
       mapCoordinates(
         mapFields({
@@ -73,7 +92,24 @@ if (submitButton) {
         })
       )
     );
-  });
-}
+  }
+});
+
+const createPDF = () => {
+  updatePdf(
+    mapCoordinates(
+      mapFields({
+        dateOfAbsenceFrom,
+        numberOfDays,
+        reasonForAbsence,
+        employeeName,
+        departmentName,
+        managerName,
+        numberOfHours,
+        dateOfAbsenceTo,
+      })
+    )
+  );
+};
 
 fetchPdfTemplate();

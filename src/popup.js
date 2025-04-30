@@ -39,3 +39,9 @@ managerNameInput.addEventListener("input", (event) => {
     console.log("managerName saved:", event.target.value);
   });
 });
+
+document.getElementById("submitBtn").addEventListener("click", () => {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.sendMessage(tabs[0].id, { action: "triggerSubmit" });
+  });
+});
